@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.TooManyListenersException;  
 
+import com.haifeiWu.utils.ReadConfFile;
+
 
 public class SerialRead {
 	public String retValue;
@@ -23,15 +25,15 @@ public class SerialRead {
 	public static boolean isFirstAction = true;
 	public static String oldDeviceId = null;
 	public static String requestInterface = "http://192.168.1.172:8080/ManagePlantfromNew/readRfid.action";//与服务器的请求接口
-	private String serialPort = "/dev/ttyUSB0";
+	private String port = "/dev/ttyUSB0";
 	
 	
 	public void init() {  
 	        try {  
-	            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(serialPort);  
+	            CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(ReadConfFile.getString("port"));  
 	            // 直接取得COM3端口  
 	            System.out.println(portId.getName() + ":开启");  
-	            @SuppressWarnings("unused")  
+	            @SuppressWarnings("unused")
 	            Read SerialRead = new Read(portId);
 	        } catch (Exception ex) {  
 	            ex.printStackTrace();  
@@ -119,7 +121,7 @@ public class SerialRead {
 		                        	String requestStr = "deviceId="+ deviceId+"&wristId="+wristId+"&txID="+txID;
 		                        	//请求服务器，向服务器发送设备信息
 		                        	//if(((new Date().getTime())-SerialRead.startTime.getTime())/1000>10){		                        	
-			                            String s = HttpRequest.sendPost(SerialRead.requestInterface,requestStr );
+			                            String s = HttpRequest.sendPost(ReadConfFile.getString("requestInterface"),requestStr );
 			                            System.out.println(s);		                        	
 //		                        	}
 		                        }else{
@@ -170,7 +172,7 @@ public class SerialRead {
 	        		System.out.println("SerialRead.isActive == false");
 	        		if(((new Date().getTime())-SerialRead.startTime.getTime())/1000>60){
 	        			//发送停止录像的请求信息
-	        			HttpRequest.sendPost(SerialRead.requestInterface, "requestStr");
+	        			HttpRequest.sendPost(ReadConfFile.getString("requestInterface"), "requestStr");
 	        			SerialRead.startTime = new Date();//更新时间为当前时间
 	        			System.out.println("超时……");
 	        		}
